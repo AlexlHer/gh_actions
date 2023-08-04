@@ -1,4 +1,4 @@
-name: 'Test'
+name: 'Build, install and test Arcane Framework'
 
 on:
   workflow_call:
@@ -61,6 +61,7 @@ on:
         required: false
         default: 'aio'
 
+
 env:
   # CTest
   CT_OPTS: "--timeout 300 --output-on-failure"
@@ -113,7 +114,7 @@ jobs:
           echo "m_rand=$(${{ env.SOURCE_DIR }}/.github/scripts/rand_pkg.sh)" >> $GITHUB_ENV
 
       - name: Build and install framework
-        uses: AlexlHer/gh_actions/build_install_framework
+        uses: AlexlHer/gh_actions/build_install_framework@master
         with:
           source_dir: ${{ env.SOURCE_DIR }}
           build_dir: ${{ env.BUILD_DIR }}
