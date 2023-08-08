@@ -13,6 +13,11 @@ on:
         type: string
         required: false
         default: 'GCC'
+      mpi:
+        description: 'MPI (OpenMPI, MPICH)'
+        type: string
+        required: false
+        default: 'OpenMPI'
       with_cuda:
         description: 'Compile with CUDA too ?'
         type: boolean
@@ -87,6 +92,17 @@ jobs:
           echo "INSTALL_DIR=${GITHUB_WORKSPACE}/install" >> $GITHUB_ENV
           echo "CCACHE_DIR=${GITHUB_WORKSPACE}/ccache" >> $GITHUB_ENV
           echo "CT_RESULT_PATH=${GITHUB_WORKSPACE}/test" >> $GITHUB_ENV
+
+      - name: Set MPICH
+        if: "${{ inputs.mpi == 'MPICH' }}"
+        shell: bash
+        run: |
+          update-alternatives --set mpirun /usr/bin/mpirun.mpich
+          update-alternatives --set mpi /usr/bin/mpicc.mpich
+          update-alternatives --set h5pcc /usr/bin/h5pcc.mpich
+          update-alternatives --set hdf5.pc /usr/lib/x86_64-linux-gnu/pkgconfig/hdf5-mpich.pc
+          update-alternatives --set mpi-x86_64-linux-gnu /usr/include/x86_64-linux-gnu/mpich
+          update-alternatives --set parmetis /usr/local/parmetis_mpich/include/parmetis.h
 
       - name: Get date
         shell: bash
