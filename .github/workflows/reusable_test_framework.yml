@@ -91,7 +91,7 @@ jobs:
           echo "BUILD_DIR=${GITHUB_WORKSPACE}/build" >> $GITHUB_ENV
           echo "INSTALL_DIR=${GITHUB_WORKSPACE}/install" >> $GITHUB_ENV
           echo "CCACHE_DIR=${GITHUB_WORKSPACE}/ccache" >> $GITHUB_ENV
-          echo "CT_RESULT_PATH=${GITHUB_WORKSPACE}/test" >> $GITHUB_ENV
+          echo "CT_RESULT_DIR=${GITHUB_WORKSPACE}/test" >> $GITHUB_ENV
 
       - name: Set MPICH
         if: "${{ inputs.mpi == 'MPICH' }}"
@@ -146,13 +146,13 @@ jobs:
         if: ${{ inputs.execute_tests }}
         shell: bash
         run: |
-          mkdir -p ${{ env.CT_RESULT_PATH }}
-          ARCANE_CHECK=1 ctest --test-dir ${{ env.BUILD_DIR }} --output-junit ${{ env.CT_RESULT_PATH }}/results.xml ${{ env.CT_OPTS }} -E '${{inputs.excluded_tests}}' -LE '${{inputs.excluded_tests_with_labels}}'
+          mkdir -p ${{ env.CT_RESULT_DIR }}
+          ARCANE_CHECK=1 ctest --test-dir ${{ env.BUILD_DIR }} --output-junit ${{ env.CT_RESULT_DIR }}/results.xml ${{ env.CT_OPTS }} -E '${{inputs.excluded_tests}}' -LE '${{inputs.excluded_tests_with_labels}}'
 
       - name: Upload test artifact
         if: failure()
         uses: actions/upload-artifact@v3
         with:
           name: ${{ inputs.cache_key_prefix }}-test-artifact
-          path: ${{ env.CT_RESULT_PATH }}
+          path: ${{ env.CT_RESULT_DIR }}
           retention-days: 7
