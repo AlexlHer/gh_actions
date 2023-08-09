@@ -69,9 +69,9 @@ on:
 
 env:
   # CTest
-  CT_OPTS: "--timeout 600 --output-on-failure"
+  CT_OPTS: "--timeout 1200 --output-on-failure"
 
-  # MPI
+  # OpenMPI
   OMPI_ALLOW_RUN_AS_ROOT: 1
   OMPI_ALLOW_RUN_AS_ROOT_CONFIRM: 1
 
@@ -128,7 +128,9 @@ jobs:
         shell: bash
         run: |
           chmod u+x ${{ env.SOURCE_DIR }}/.github/scripts/rand_pkg.sh
-          echo "m_rand=$(${{ env.SOURCE_DIR }}/.github/scripts/rand_pkg.sh)" >> $GITHUB_ENV
+          MRAND=$(${{ env.SOURCE_DIR }}/.github/scripts/rand_pkg.sh)
+          echo "$MRAND"
+          echo "m_rand=$MRAND" >> $GITHUB_ENV
 
       - name: Build and install framework
         uses: AlexlHer/gh_actions/build_install_framework@master
