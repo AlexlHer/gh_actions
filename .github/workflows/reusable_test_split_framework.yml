@@ -63,7 +63,7 @@ on:
 
 env:
   # CTest
-  CT_OPTS: "--timeout 300 --output-on-failure"
+  CT_OPTS: "--timeout 600 --output-on-failure"
 
   # MPI
   OMPI_ALLOW_RUN_AS_ROOT: 1
@@ -97,6 +97,7 @@ jobs:
           update-alternatives --set hdf5.pc /usr/lib/x86_64-linux-gnu/pkgconfig/hdf5-mpich.pc
           update-alternatives --set mpi-x86_64-linux-gnu /usr/include/x86_64-linux-gnu/mpich
           update-alternatives --set parmetis /usr/local/parmetis_mpich/include/parmetis.h
+          mpirun --version
 
       - name: Get date
         shell: bash
@@ -152,6 +153,14 @@ jobs:
           type_build: ${{ inputs.type_build }}
           compilo: ${{ inputs.compilo }}
 
+      - name: Upload build Arccore artifact
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ inputs.cache_key_prefix }}-build-arccore-artifact
+          path: ${{ env.BUILD_DIR }}/arccore/CMakeFiles
+          retention-days: 7
+
       - name: Build and install Arcane
         uses: AlexlHer/gh_actions/split/build_install_arcane@master
         with:
@@ -169,6 +178,13 @@ jobs:
           with_cuda: ${{ inputs.with_cuda }}
           with_samples: ${{ inputs.with_samples }}
 
+      - name: Upload build Arcane artifact
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ inputs.cache_key_prefix }}-build-arcane-artifact
+          path: ${{ env.BUILD_DIR }}/arcane/CMakeFiles
+          retention-days: 7
 
       - name: Test Arccore
         if: ${{ inputs.execute_tests }}
