@@ -113,7 +113,7 @@ runs:
         ${{ env.CMAKE_ADD_ARGS }}
 
     - name: Save configure log
-      if: failure()
+      if: failure() && inputs.log_dir != ''
       shell: bash
       run: |
         mkdir -p "${{ inputs.log_dir }}/configure"
@@ -125,7 +125,7 @@ runs:
         cmake --build ${{ inputs.build_dir }}
 
     - name: Save build log
-      if: failure() && ${{ inputs.log_dir != '' }}
+      if: failure() && inputs.log_dir != ''
       shell: bash
       run: |
         mkdir -p "${{ inputs.log_dir }}/build"
