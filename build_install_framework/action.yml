@@ -111,10 +111,9 @@ runs:
         -DBUILD_SHARED_LIBS=ON \
         ${{ inputs.cmake_additionnal_args }} \
         ${{ env.CMAKE_ADD_ARGS }}
-        echo "Youpi"
 
     - name: Save configure log
-      if: failure() && ${{ inputs.log_dir != '' }}
+      if: failure()
       shell: bash
       run: |
         mkdir -p "${{ inputs.log_dir }}/configure"
