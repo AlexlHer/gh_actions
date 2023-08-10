@@ -113,26 +113,11 @@ runs:
         ${{ inputs.cmake_additionnal_args }} \
         ${{ env.CMAKE_ADD_ARGS }}
 
-    - name: Save configure log
-      if: failure() && steps.configure-framework.outcome == 'failure' && inputs.log_dir != ''
-      shell: bash
-      run: |
-        mkdir -p "${{ inputs.log_dir }}/configure"
-        cp -r "${{ inputs.build_dir }}/CMakeFiles" "${{ inputs.log_dir }}/configure" | true
-
     - name: Build framework
       id: build-framework
       shell: bash
       run: |
         cmake --build ${{ inputs.build_dir }}
-
-    - name: Save build log
-      if: failure() && steps.build-framework.outcome == 'failure' && inputs.log_dir != ''
-      shell: bash
-      run: |
-        mkdir -p "${{ inputs.log_dir }}/build"
-        cp "${{ inputs.build_dir }}/build.ninja" "${{ inputs.log_dir }}/build" | true
-        cp "${{ inputs.build_dir }}/CMakeCache.txt" "${{ inputs.log_dir }}/build" | true
 
     - name: Install framework
       if: "${{ inputs.install_dir != '' }}"
@@ -156,3 +141,12 @@ runs:
       if: "${{ inputs.cache_dir != '' }}"
       shell: bash
       run: ccache -s
+
+    - name: Save log
+      if: ${{ always() && inputs.log_dir != '' }}
+      shell: bash
+      run: |
+        mkdir -p "${{ inputs.log_dir }}"
+        cp -r "${{ inputs.build_dir }}/CMakeFiles" "${{ inputs.log_dir }}" | true
+        cp "${{ inputs.build_dir }}/build.ninja" "${{ inputs.log_dir }}" | true
+        cp "${{ inputs.build_dir }}/CMakeCache.txt" "${{ inputs.log_dir }}" | true
