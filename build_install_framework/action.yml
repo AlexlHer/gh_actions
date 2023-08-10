@@ -19,6 +19,12 @@ inputs:
     description: '[IN/OUT] Cache directory to accelerate compile time'
     type: string
     required: false
+    default: ""
+  log_dir:
+    description: '[OUT] Log directory to save log'
+    type: string
+    required: false
+    default: ""
   cmake_additionnal_args:
     description: 'Additionnal arguments for configure'
     type: string
@@ -106,10 +112,25 @@ runs:
         ${{ inputs.cmake_additionnal_args }} \
         ${{ env.CMAKE_ADD_ARGS }}
 
+    - name: Save configure log
+      if: failure() && ${{ inputs.log_dir != '' }}
+      shell: bash
+      run: |
+        mkdir -p "${{ inputs.log_dir }}/configure"
+        cp -r "${{ inputs.build_dir }}/CMakeFiles" "${{ inputs.log_dir }}/configure" | true
+
     - name: Build framework
       shell: bash
       run: |
         cmake --build ${{ inputs.build_dir }}
+
+    - name: Save build log
+      if: failure() && ${{ inputs.log_dir != '' }}
+      shell: bash
+      run: |
+        mkdir -p "${{ inputs.log_dir }}/build"
+        cp "${{ inputs.build_dir }}/build.ninja" "${{ inputs.log_dir }}/build" | true
+        cp "${{ inputs.build_dir }}/CMakeCache.txt" "${{ inputs.log_dir }}/build" | true
 
     - name: Install framework
       if: "${{ inputs.install_dir != '' }}"
