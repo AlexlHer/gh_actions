@@ -102,6 +102,7 @@ runs:
         echo "CMAKE_ADD_ARGS=${{ env.CMAKE_ADD_ARGS }} -DCMAKE_INSTALL_PREFIX=${{ inputs.install_dir }}" >> $GITHUB_ENV
 
     - name: Configure framework
+      id: configure-framework
       shell: bash
       run: |
         cmake \
@@ -113,19 +114,20 @@ runs:
         ${{ env.CMAKE_ADD_ARGS }}
 
     - name: Save configure log
-      if: failure() && inputs.log_dir != ''
+      if: failure() && steps.configure-framework.outcome == 'failure' && inputs.log_dir != ''
       shell: bash
       run: |
         mkdir -p "${{ inputs.log_dir }}/configure"
         cp -r "${{ inputs.build_dir }}/CMakeFiles" "${{ inputs.log_dir }}/configure" | true
 
     - name: Build framework
+      id: build-framework
       shell: bash
       run: |
         cmake --build ${{ inputs.build_dir }}
 
     - name: Save build log
-      if: failure() && inputs.log_dir != ''
+      if: failure() && steps.build-framework.outcome == 'failure' && inputs.log_dir != ''
       shell: bash
       run: |
         mkdir -p "${{ inputs.log_dir }}/build"
