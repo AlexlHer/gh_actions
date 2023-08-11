@@ -84,7 +84,12 @@ runs:
         -DCMAKE_INSTALL_PREFIX=${{ inputs.install_dir }} \
         -DArccon_DIR=${{ inputs.arccon_install_dir }}/share/cmake/Arccon \
         ${{ inputs.cmake_additionnal_args }} \
-        ${{ env.CMAKE_ADD_ARGS }}
+        ${{ env.CMAKE_ADD_ARGS }} \
+        -DMPI_SKIP_COMPILER_WRAPPER=TRUE \
+        -DCMAKE_INCLUDE_PATH=/usr/include/x86_64-linux-gnu/mpi \
+        -DMPI_C_LIB_NAMES=mpi \
+        -DMPI_CXX_LIB_NAMES=mpi \
+        -DMPI_mpi_LIBRARY=/usr/lib/x86_64-linux-gnu/libmpi.so
 
     - name: Build arccore
       shell: bash
