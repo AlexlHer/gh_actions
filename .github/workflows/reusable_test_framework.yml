@@ -39,7 +39,7 @@ on:
         required: false
         default: false
       with_samples:
-        description: 'Compile samples too ?'
+        description: 'Compile samples too ? Require install_dir.'
         type: boolean
         required: false
         default: true
