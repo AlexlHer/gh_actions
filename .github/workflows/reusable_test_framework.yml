@@ -99,6 +99,7 @@ jobs:
           echo "LOG_DIR=${GITHUB_WORKSPACE}/log" >> $GITHUB_ENV
           echo "CT_RESULT_DIR=${GITHUB_WORKSPACE}/test" >> $GITHUB_ENV
 
+
       - name: Set MPICH
         if: "${{ inputs.mpi == 'MPICH' }}"
         shell: bash
